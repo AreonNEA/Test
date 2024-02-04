@@ -1,4 +1,4 @@
-//test
+//image
 const canvas = document.querySelector("canvas")
 const span = document.querySelector("span")
 const context = canvas.getContext("2d")
@@ -17,6 +17,8 @@ boxImg.src = "https://opengameart.org/sites/default/files/RTS_Crate.png"
 const cakeImg = document.createElement("img")
 cakeImg.src = "cake.jpg"
 
+
+//audio
 const sound = document.createElement("audio")
 sound.src = "boom.mp3"
 
@@ -31,6 +33,7 @@ nyam.src = "nyam.mp3"
 const bang = document.createElement("audio")
 bang.src = "bang.mp3"
 
+//object data
 let data = {
     cat: {
         xDelta: -5,
@@ -62,19 +65,23 @@ let result = 0;
 let box = 0
 
 
+function comparisonFunction(valOne, valTwo) {
+    if (valOne.x + valOne.width >= valTwo.x + valTwo.width &&
+        valOne.y + valOne.height >= valTwo.y + valTwo.height) {
+        valTwo.x = -100;
+    }
+}
 
+//this is where the objects are updated and compared
 function updated() {
-    if (data.cat.x >= canvas.width) {
-        data.cat.x = 0
-    } else if (data.cat.x + data.cat.width < 0) {
+
+
+    if (data.cat.x + data.cat.width < 0) {
         data.cat.x = canvas.width
     }
 
-    if (data.cat.x + data.cat.width >= data.mouse.x + data.mouse.width &&
-        data.cat.y + data.cat.height >= data.mouse.y + data.mouse.height) {
-        data.mouse.x = -100;
-    }
 
+    comparisonFunction(data.cat, data.mouse)
 
     if (data.mouse.x === -100) {
         data.mouse.x = canvas.width + 100
@@ -113,13 +120,13 @@ function updated() {
         return data.cat.y = 50
     }
 
-    if (result >= 500) {
+    if (result >= 100) {
+        data.box.y += +3;
+    } else if (result >= 500) {
         alert("YOU WON")
 
     }
-    if (result >= 100) {
-        data.box.y += +3;
-    }
+
 
 
     data.cake.forEach(function (cake) {
@@ -138,22 +145,35 @@ function updated() {
                 data.box.y = -100;
                 data.box.x = Math.floor(Math.random() * canvas.width);
             }, 100)
-        } else { boxImg.src = "https://opengameart.org/sites/default/files/RTS_Crate.png"}
- 
+        } else {
+            boxImg.src = "https://opengameart.org/sites/default/files/RTS_Crate.png"
+        }
+
     })
 
 
 
+
+    //x and y changes
     data.mouse.x -= 2
     data.box.y -= data.box.yDelta
     data.cat.x += data.cat.xDelta
     data.cat.y += data.cat.yDelta
     span.textContent = result
-    
-   
+
+    //removing unnecessary objects
+    data.cake = data.cake.filter(function (cake) {
+        if (cake.x < 0) {
+            return false;
+        }
+        return true;
+    })
+
 };
 
-
+/**
+ * @param This feature draws a cat, a mouse, a box, a background and a cake.
+ */
 
 function draw() {
     context.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height)
@@ -175,6 +195,8 @@ function loop() {
 loop()
 
 
+
+//keyboard control
 addEventListener("keydown", function (evt) {
     if (evt.code === "ArrowRight") {
         data.cat.xDelta = 0
@@ -196,4 +218,3 @@ addEventListener("keydown", function (evt) {
         })
     }
 })
-
