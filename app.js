@@ -1,3 +1,4 @@
+//test
 const canvas = document.querySelector("canvas")
 const span = document.querySelector("span")
 const context = canvas.getContext("2d")
