@@ -6,6 +6,7 @@ const context = canvas.getContext("2d")
 const backgroundImg = document.createElement("img")
 backgroundImg.src = "https://lumiere-a.akamaihd.net/v1/images/sa_pixar_virtualbg_toystory_16x9_8461039f.jpeg"
 
+
 const heroCat = document.createElement("img")
 
 const mouseJerry = document.createElement("img")
@@ -19,8 +20,8 @@ cakeImg.src = "cake.jpg"
 
 
 //audio
-const sound = document.createElement("audio")
-sound.src = "boom.mp3"
+const boom = document.createElement("audio")
+boom.src = "boom.mp3"
 
 
 const tomMp = document.createElement("audio")
@@ -80,8 +81,7 @@ function updated() {
         data.cat.x = canvas.width
     }
 
-
-    comparisonFunction(data.cat, data.mouse)
+    comparisonFunction(data.cat, data.mouse) //data.mouse = -100
 
     if (data.mouse.x === -100) {
         data.mouse.x = canvas.width + 100
@@ -93,22 +93,18 @@ function updated() {
     }
 
 
-
     if (data.box.y > canvas.height) {
-
         data.box.y = -100;
         data.box.x = Math.floor(Math.random() * canvas.width)
     }
 
-    if (
-        data.cat.x + 20 < data.box.x + data.box.width
+    if (data.cat.x + 20 < data.box.x + data.box.width
         && data.cat.x - 50 + data.cat.width > data.box.x
         && data.cat.y < data.box.y + data.box.height - 100
         && data.cat.y + data.cat.height - 100 > data.box.y
     ) {
-        sound.currentTime = 0;
-        sound.play();
-        tomMp.play();
+        boom.currentTime = 0;
+        boom.play();
         heroCat.src = "cat<X>.png"
         box += 1
         data.cat.x += 4
@@ -116,19 +112,12 @@ function updated() {
     } else { heroCat.src = "flycat.png" }
 
     if (data.cat.y > canvas.height || box >= 100) {
+        tomMp.play();
         alert("GAME OVER: You Caught The Mouse " + result + " Times")
-        return data.cat.y = 50
+        data.cat.y = 50
     }
 
-    if (result >= 100) {
-        data.box.y += +3;
-    } else if (result >= 500) {
-        alert("YOU WON")
-
-    }
-
-
-
+    //checks for collisions and performs certain actions based on the checks
     data.cake.forEach(function (cake) {
         cake.x += cake.xDelta
 
@@ -138,19 +127,34 @@ function updated() {
             && cake.y < data.box.y + data.box.height
             && cake.y + cake.height > data.box.y
         ) {
+            data.cake = data.cake.filter(function () {
+                return false;
+            })
+
+
             boxImg.src = "boom.jpg"
             bang.play();
 
             setTimeout(function () {
+
                 data.box.y = -100;
                 data.box.x = Math.floor(Math.random() * canvas.width);
-            }, 100)
-        } else {
-            boxImg.src = "https://opengameart.org/sites/default/files/RTS_Crate.png"
-        }
+            }, 50)
+
+
+        } setTimeout(function () { boxImg.src = "https://opengameart.org/sites/default/files/RTS_Crate.png" }, 300)
 
     })
 
+
+    //game level
+    if (result >= 100) {
+        data.box.y += +3;
+        backgroundImg.src = "https://wallpapercave.com/wp/wp10733000.jpg"
+        boxImg.src = "pineapple.png"
+    } else if (result >= 500) {
+        alert("YOU WON")
+    }
 
 
 
@@ -159,7 +163,7 @@ function updated() {
     data.box.y -= data.box.yDelta
     data.cat.x += data.cat.xDelta
     data.cat.y += data.cat.yDelta
-    span.textContent = result
+    span.textContent = result + "/500"
 
     //removing unnecessary objects
     data.cake = data.cake.filter(function (cake) {
@@ -168,6 +172,8 @@ function updated() {
         }
         return true;
     })
+
+
 
 };
 
@@ -218,3 +224,4 @@ addEventListener("keydown", function (evt) {
         })
     }
 })
+
